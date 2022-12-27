@@ -3,6 +3,21 @@ const cartControllers = require('./cart.controllers')
 const getAll = (req, res) => {
     cartControllers.getAllCart()
         .then(response => {
+            res.status(200).json({
+                items: response.length,
+                cart: response
+            })
+        })
+        .catch(err => {
+            res.status(400).json(err)
+        })
+}
+
+const getAllByUser= (req, res) => {
+    const userId = req.user.id
+    console.log(userId)
+    cartControllers.getCartUser(userId)
+        .then(response => {
             res.status(200).json(response)
         })
         .catch(err => {
@@ -10,40 +25,29 @@ const getAll = (req, res) => {
         })
 }
 
-const getUserById = (req, res) => {
-    const userId = req.params.id
-    cartControllers.getCartUserById(userId)
-        .then(response => {
-                res.status(200).json(response)
-        })
-        .catch(err => {
-            res.status(400).json({message: `No existe Cart-User con el id: ${userId}`})
-        })
-}
-
 const editCart = (req, res) => {
     const body = req.body
     const userId = req.user.id
-    if(Object.keys(body).length) {
+    if(!Object.keys(body).length) {
         res.status(400).json({message: 'Missing Data'})
     } else if (
         !body.id ||
         !body.quantity ||
         !body.totalPrice
-    ) {
-        res.status(400).json({
+        ) {
+            res.status(400).json({
             message: 'All fields must be completed',
             fields:{
                 id : 'string',   
                 quantity:  'string',
                 totalPrice: 111
-                }
-            })
+            }
+        })
     } else  {
-        cartControllers.editCartById(body, userId)
-            .then(response => {
+        cartControllers.editCartById(userId,body)
+        .then(response => {
                 res.status(200).json({
-                    message: `Product edited successfully with id: ${response.id}`
+                    message: `Product edited successfully with id: ${body.id}`,
                 })
             })
             .catch(err => {
@@ -53,10 +57,11 @@ const editCart = (req, res) => {
 }
 
 const createProductCart = (req, res) => {
-   // const userId = req.user.id
+    const userId = req.user.id
     const body = req.body
-    cartControllers.addProductToCart(body)
+    cartControllers.addProductToCart(userId, body)
         .then(response => {
+            console.log(response)
             res.status(201).json(response)
         })
         .catch(err => {
@@ -65,20 +70,25 @@ const createProductCart = (req, res) => {
 }
 
 const remove = (req, res) => {
+    const body = req.body
     const id = req.params.id
-    const userId = req.user
-    cartControllers.removeProductFromCart(id, userId)
+    console.log(req.body)
+    cartControllers.removeProductFromCart(id)
         .then(response => {
-            res.status(200).json(response)
+            if(res){
+                res.status(200).json(response)
+            } else {
+                res.status(400).json({message: 'Invalid id'})
+            }
         })
         .catch(err => {
-            res.status(400).json(err)
+            res.status(400).json({message: "erhttp", err})
         })
 }
 
 module.exports = {
     getAll,
-    getUserById,
+    getAllByUser,
     editCart,
     createProductCart,
     remove

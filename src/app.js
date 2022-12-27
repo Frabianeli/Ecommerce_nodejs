@@ -1,6 +1,5 @@
 // Dependencias
 const express = require('express')
-
 const cors = require('cors')
 
 // Archivos de rutas
@@ -17,6 +16,12 @@ const defaultData = require('./utils/defaultData')
 const {db} = require('./utils/database')
 
 
+const corsOptions = {
+  "origin": "*",
+  "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+  "preflightContinue": false,
+  "optionsSuccessStatus": 204
+}
 const app = express()
 app.use(cors())
 

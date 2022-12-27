@@ -5,6 +5,7 @@ const Roles = require('./roles.model')
 const Users = require('./users.model')
 const Cart = require('./cart.model')
 const Payments = require('./payments.model')
+const CartProduct = require('./cartProduct')
 
 const initModels = () => {
     
@@ -22,8 +23,17 @@ const initModels = () => {
     ProductsImage.belongsTo(Products)
 
 
+    Users.hasOne(Cart)
+    Cart.belongsTo(Users)
+
+    Products.hasMany(CartProduct)
+    CartProduct.belongsTo(Products)
+
+    Cart.hasMany(CartProduct)
+    CartProduct.belongsTo(Cart)
     
-    Users.belongsToMany(Products,{
+
+    /*Users.belongsToMany(Products,{
         through: Cart,
         foreignKey: 'userId',
         otherKey: 'productId'
@@ -38,7 +48,8 @@ const initModels = () => {
     Cart.belongsTo(Products)
     
     Products.hasMany(Cart)
-    Users.hasMany(Cart)
+    Users.hasMany(Cart)*/
+
 
 }
 

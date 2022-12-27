@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken')
 
 const authControllers = require('./auth.controllers')
 
-
 const login = (req, res) => {
     const body = req.body
     if(!Object.keys(body).length) {
@@ -19,17 +18,20 @@ const login = (req, res) => {
     } else {
         authControllers.loginUser(body.email, body.password)
             .then((response) => {
-               /* if(response.email){
+                if(response.email){
                     const token = jwt.sign({
                         id: response.id,
                         email: response.email,
                         rol: response.roleId
                     }, 'example')
+                    if(response.roleId === '5ee551ed-7bf4-44b0-aeb5-daaa824b9473'){
+                        return res.status(200).json({message: 'Tus credenciales son correctas', user: token, response})
+                    }
+                    console.log('despues de role.name')
                     return res.status(200).json({message: 'Tus credenciales son correctas', user: token})
                 } else {
-                    res.status(401).json({message: 'Invalid cedentials'})
-                }*/
-                res.status(201).json(response)
+                    res.status(401).json({message: 'Invalid credentials'})
+                }
             })
             .catch(err => {
                 res.status(400).json(err)
@@ -42,12 +44,17 @@ const register = (req, res) => {
     if(!Object.keys(body).length) {
         res.status(400).json({message: 'Missing Data'})
     }
-    else if(!body.email || !body.password){
+    else if(
+            !body.name ||
+            !body.email ||
+            !body.password 
+            ){
         res.status(400).json({
             message: 'All fields must be completed',
             fields:{
+                name:  'string',
                 email : 'email',   
-                password:  'string'
+                password:  'string',
                 }
         })
     } else {

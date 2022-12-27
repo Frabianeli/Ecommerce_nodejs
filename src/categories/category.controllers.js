@@ -6,6 +6,7 @@ const ProductsImage = require('../models/productsImage.model')
 
 const getAllCategory = async() => {
     const data = await Categories.findAll({
+        as: 'categories',
         attributes: {
             exclude: ['createdAt', 'updatedAt']
         }
@@ -23,12 +24,16 @@ const getCategoryById = async(id) => {
             attributes: {
                 exclude: ['createdAt', 'updatedAt', 'categoryId']
             },
-            include: {
-                model: ProductsImage,
-                attributes: {
-                    exclude: ['createdAt', 'updatedAt', 'productId', 'id']
+            include: [
+                {
+                    model: ProductsImage,
+                    attributes: ['url']
+                },
+                {
+                    model: Categories,
+                    attributes: ['name']
                 }
-            }
+            ]
         },
         attributes: {
             exclude: ['createdAt', 'updatedAt']

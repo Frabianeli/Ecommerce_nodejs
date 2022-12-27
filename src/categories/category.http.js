@@ -12,7 +12,6 @@ const getAll = (req, res) => {
 
 const getById = (req, res) => {
     const id = req.params.id
-    console.log(id)
     categoryControllers.getCategoryById(id)
         .then((response) => {
             res.status(200).json(response)

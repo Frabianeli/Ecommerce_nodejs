@@ -1,6 +1,10 @@
+const Roles = require('../models/roles.model')
 const Users = require('../models/users.model')
+const uuid = require('uuid')
 
-const {comparePassword} = require('../utils/crypt')
+const { comparePassword, hashPassword } = require('../utils/crypt')
+const { createCart } = require('../cart/cart.controllers')
+
 
 const getUserByEmail = async(email) => {
     const data = await Users.findOne({
@@ -14,7 +18,7 @@ const getUserByEmail = async(email) => {
 const loginUser = async(email, password) => {
     const userByEmail = await getUserByEmail(email)
     if(userByEmail){
-        const verifyPassword = comparePassword(password, user.password)
+        const verifyPassword = comparePassword(password, userByEmail.password)
         if(verifyPassword){
             return userByEmail
         }
@@ -23,17 +27,26 @@ const loginUser = async(email, password) => {
 }
 
 const registerUser = async (data) => {
-    const userByEmail = await getUserByEmail(email)
+    const rol = await Roles.findOne({
+        where:{
+            name: 'host'
+        }
+    })
+    const userByEmail = await getUserByEmail(data.email)
     if (!userByEmail) {
         const newUser = await Users.create({
+            id: uuid.v4(),
             name: data.name,
             email: data.email,
-            password: data.password,
-            roleId: '',
+            password: hashPassword(data.password),
+            roleId: rol.id,
             status: 'active',
             verified: 'false'
         })
-        return newUser
+        if(newUser){
+            await createCart(newUser.id)
+            return newUser
+        }
     }
     return false
 }

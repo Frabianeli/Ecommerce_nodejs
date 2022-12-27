@@ -2,45 +2,29 @@ const uuid = require('uuid')
 const Products = require('../models/products.model')
 const ProductsImage = require('../models/productsImage.model')
 const Categories = require('../models/categories.model')
+const { Sequelize } = require('sequelize')
+const sequelize = ('sequelize')
+
 
 const getAllProducts = async() => {
     const data  = await Products.findAll({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt', 'categoryId']
+        },
         include: [
             {
                 model: Categories,
-                attributes: {
-                    exclude: ['id', 'createdAt', 'updatedAt']
-                }
+                as: 'category',
+                attributes: ['name']
             },
             {
                 model: ProductsImage,
-                attributes: {
-                    exclude: ['id', 'createdAt', 'updatedAt', 'productId']
-                },
+                attributes: ['url']
             }
         ],
-        attributes: {
-            exclude : ['createdAt', 'updatedAt', 'categoryId']
-        }
     })
+    
     return data
-}
-
-const img = async () => {
-    let arrayImage = []
-
-    for(let i = 0; data.length < i ; i++){
-        const img = await ProductsImage.findAll({
-            where: {
-                productId: data[i].id
-            }
-        })
-        if(img) {
-            console.log('first')
-            img.map((e) => arrayImage.push(e.url))
-        }
-    }
-    return arrayImage
 }
 
 const getProductById = async (id) => {
@@ -52,9 +36,11 @@ const getProductById = async (id) => {
             {
                 model: Categories,
                 as: 'category',
-                attributes: {
-                    exclude: ['id', 'createdAt', 'updatedAt']
-                }
+                attributes: ['name']
+            },
+            {
+                model: ProductsImage,
+                attributes: ['url']
             }
         ],
         attributes: {
@@ -70,16 +56,15 @@ const createProduct = async (data, host, images) => {
    const productId = uuid.v4()
 
    const newProduct = await Products.create({
-    id: productId,
-    title: data.title,
-    description: data.description,
-    price: data.price,
-    stock: data.stock,
-    categoryId: data.categoryId,
-})
-    console.log({controllers: data})
+        id: productId,
+        title: data.title,
+        description: data.description,
+        price: data.price,
+        stock: data.stock,
+        categoryId: data.categoryId,
+    })
+    console.log('pase prodcut controllers')
     const arrayImg = []
-    console.log({controllersImg : images})
     images.forEach((img) => {
         arrayImg.push({
             id: uuid.v4(),
@@ -87,13 +72,13 @@ const createProduct = async (data, host, images) => {
             url: host+ img.filename
         })
     })
-       const createImg = await ProductsImage.bulkCreate(arrayImg)
-
-
+    const createImg = await ProductsImage.bulkCreate(arrayImg)
+    console.log({imageControllers: createImg})
 
     return {...newProduct.dataValues,
                 images: createImg.map(img => img.url)
             }
+
 }
 
 const removeProduct = async (id) => {

@@ -7,23 +7,23 @@ const roleAdminMiddleware = (req, res, next) => {
         }
     })
       .then((response) => {
-      const rol = req.user.rol
+        const rol = req.user.rol
 
-      if (rol === response.id) {
-        next()
-      } else {
+        if (rol === response.id) {
+          next()
+        } else {
+          res.status(401).json({
+              status: "error",
+              message: "User not authorized to make this request",
+            })
+        }
+      })
+      .catch(() =>
         res.status(401).json({
             status: "error",
-            message: "User not authorized to make this request",
+            message: "User not authorized to make this request"
           })
-      }
-    })
-    .catch(() =>
-      res.status(401).json({
-          status: "error",
-          message: "User not authorized to make this request"
-        })
-    )
+      )
 }
 
 const roleHostMiddleware = (req, res, next) => {

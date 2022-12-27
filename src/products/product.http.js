@@ -1,6 +1,10 @@
+const Cart = require('../models/cart.model')
+const CartProduct = require('../models/cartProduct')
+const Products = require('../models/products.model')
 const productControllers = require('./product.controllers')
 
-const getAll = (req, res)=> {
+const getAll = async (req, res)=> {
+    console.log(req.query)
     productControllers.getAllProducts()
         .then((response) => {
             res.status(200).json({items: response.length, products: response})
@@ -21,8 +25,6 @@ const getById = (req, res) => {
 
 const create = (req, res) => {
     const body = JSON.parse(req.body.product)
-    console.log({http: body})
-
     if(!Object.keys(body).length){
         res.status(400).json({message: 'Missin Data'})
     } else if (
@@ -43,10 +45,8 @@ const create = (req, res) => {
                 }
             })
     } else {
-
-        const host = req.hostname + ':3000'+ '/api/v1/upload/'
+        const host =  req.hostname + '/api/v1/upload/'
         const images = req.files
-        console.log({files:images})
         productControllers.createProduct(body, host, images)
             .then((response) => {
                 console.log(response)
@@ -112,32 +112,11 @@ const edit = (req, res) => {
     }
 }
 
-const profileImg = (req, res) => {
-   // const productId = req.params.id
-    const images = req.files
-    const host = req.hostname + ':3000'+ '/api/v1/upload/'
-    productControllers.postProfileImg( images, host)
-        .then((response) => {
-            if(response) {
-                if(res) {
-                    res.status(201).json(response)
-                } else {
-                    res.status(400).json({message: 'Invalid ID'})
-                }
-            } else {
-                res.status(400).json({message: 'Invalid ID'})
-            }
-        })
-        .catch((err)=> {
-            res.status(400).json(err)
-        })
-}
 
 module.exports = {
     getAll,
     getById,
     create,
     edit,
-    remove,
-    profileImg
+    remove
 }

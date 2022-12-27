@@ -16,7 +16,7 @@ const Products = db.define('products', {
         allowNull: false
     },
     price: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.DECIMAL,
         allowNull: false,
     },
     stock: {

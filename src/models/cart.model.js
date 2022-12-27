@@ -7,21 +7,12 @@ const Cart = db.define('cart', {
         type: DataTypes.UUID,
         primaryKey: true,
     },
-    productId: {
-        allowNull: false,
-        type: DataTypes.UUID,
-        unique: false
-    },
     userId: {
         allowNull: false,
         type: DataTypes.UUID,
         unique: false
     },
-    quantity: {
-        allowNull: false,
-        type: DataTypes.INTEGER,
-    },
-    totalPrice: {
+    cartTotalPrice: {
         allowNull: false,
         type: DataTypes.FLOAT,
         field: 'total_price'

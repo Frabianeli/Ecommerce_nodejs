@@ -13,6 +13,7 @@
 
 - /api/v1/products
 - - GET 
+- - POST
 
 - /api/v1/products/:id
 - - GET 
