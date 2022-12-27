@@ -45,7 +45,7 @@ const create = (req, res) => {
                 }
             })
     } else {
-        const host =  req.hostname + '/api/v1/upload/'
+        const host =  'https://' + req.hostname + '/api/v1/upload/'
         const images = req.files
         productControllers.createProduct(body, host, images)
             .then((response) => {
