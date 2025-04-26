@@ -9,11 +9,18 @@ const CartProduct = db.define('cart_products', {
     },
     cartId: {
         type: DataTypes.UUID,
-        allowNull: false
+        allowNull: false,
+        field: 'cart_id'
     },
     productId : {
         type: DataTypes.UUID,
-        allowNull: false
+        allowNull: false,
+        field: 'product_id'
+    },
+    productStockId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        field: 'product_stock_id'
     },
     quantity: {
         allowNull: false,

@@ -9,7 +9,12 @@ const Categories = db.define('categories', {
     },
     name: {
         allowNull: false,
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+    },
+    statusId: {
+        allowNull: false,
+        type: DataTypes.UUID,
+        defaultValue: "77d71ed7-0113-4c01-aac2-ed093b355157"
     }
 })
 

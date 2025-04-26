@@ -1,17 +1,53 @@
-const router = require('express').Router()
-const cartServices = require('./cart.http')
-const passport = require('passport')
+const router = require('express').Router();
+const CartProduct = require('../models/cartProduct');
+const Products = require('../models/products.model');
+const ProductStock = require('../models/ProductStock.model');
+const cartServices = require('./cart.http');
+const passport = require('passport');
+const {
+  validateCreate,
+  validateId,
+  validateEdit,
+} = require('../validations/cart');
 
-require('../middleware/auth.middleware')(passport)
+require('../middleware/auth.middleware')(passport);
 
-router.route('/')
-    .get(cartServices.getAll)
+router.get('/', cartServices.getAll);
 
-router.route('/me')
-    .get(passport.authenticate('jwt', {session: false}), cartServices.getAllByUser)
-    .post(passport.authenticate('jwt', {session: false}), cartServices.createProductCart)
-    .patch(passport.authenticate('jwt', {session: false}), cartServices.editCart)
-    
-router.delete('/me/:id', passport.authenticate('jwt', {session: false}), cartServices.remove)
+router.get(
+  '/me',
+  passport.authenticate('jwt', { session: false }),
+  cartServices.getAllByUser
+);
 
-exports.router = router
+router
+  .route('/me/:id')
+  .patch(
+    passport.authenticate('jwt', { session: false }),
+    validateEdit,
+    cartServices.editCart
+  )
+  .delete(
+    passport.authenticate('jwt', { session: false }),
+    validateId,
+    cartServices.remove
+  )
+  .post(
+    passport.authenticate('jwt', { session: false }),
+    validateCreate,
+    cartServices.createProductCart
+  );
+
+router.get('/:cartid', async (req, res) => {
+  const cartId = req.params.cartid;
+  const data = await CartProduct.findAll({
+    where: {
+      cartId,
+    },
+    include: [{ model: Products }, { model: ProductStock }],
+    attributes: ['quantity', 'totalPrice', 'id'],
+  });
+  return res.status(200).json(data);
+});
+
+exports.router = router;

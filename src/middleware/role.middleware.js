@@ -1,6 +1,7 @@
 const Role = require("../models/roles.model");
 
 const roleAdminMiddleware = (req, res, next) => {
+  console.log('ROLE-ADMIN',req.body)
     Role.findOne({
         where: {
             name: "admin"

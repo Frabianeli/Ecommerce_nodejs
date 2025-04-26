@@ -28,19 +28,19 @@ const Users = db.define('users', {
         type: DataTypes.STRING,
     },
     roleId: {
-        allowNull: false,
         type: DataTypes.UUID,
-        field: 'role_id'
-    },
-    status: {
         allowNull: false,
-        type: DataTypes.STRING ,
-        defaultValue: 'active' // active, non-active, deleted, suspended
+        field: 'role_id'
     },
     verified: {
         allowNull: false,
         type: DataTypes.BOOLEAN,
         defaultValue: false
+    },
+    statusId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        field: 'status_id'
     }
 })
 
